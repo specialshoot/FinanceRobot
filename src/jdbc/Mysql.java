@@ -35,26 +35,23 @@ public class Mysql {
 
 	public void addData(String question) throws SQLException {
 		Connection conn = getConn();
-		String insertSql = "insert into finance(question) values(?);";
-		PreparedStatement psta = conn.prepareStatement(insertSql);
-		psta.setString(1, question);
-		// 往数据库中增加一批数据
-		psta.addBatch();
-		psta.executeBatch();
+		 String sql = "insert into finance (question) values ('" +question +"')";
+		PreparedStatement psta = conn.prepareStatement(sql);
+		psta.execute(sql);
 		psta.close();
 		conn.close();
 	}
 
 	public void ddlDel(String question) throws SQLException {
-		String ddlDelsql = "delete from finance where question=" + question;
+		String ddlDelsql = "delete from finance where question= '" + question+"'";
 		Connection conn = getConn();
 		Statement sta = conn.createStatement();
-		sta.executeUpdate(ddlDelsql);
+		sta.execute(ddlDelsql);
 		sta.close();
 		conn.close();
 	}
 
-	public ArrayList<Question> ddlSelect() throws SQLException {
+	public ArrayList<Question> ddlSelectAll() throws SQLException {
 		ArrayList<Question> questions = new ArrayList<Question>();
 		Connection conn = getConn();
 		Statement sta = conn.createStatement();
@@ -71,10 +68,11 @@ public class Mysql {
 		ArrayList<Question> questions = new ArrayList<Question>();
 		Connection conn = getConn();
 		Statement sta = conn.createStatement();
-		ResultSet rs = sta.executeQuery("select * from finance where question = " + str);
-		if (rs.wasNull()) {
-			return false;
+		ResultSet rs = sta.executeQuery("select * from finance where question = '"+str+"'");
+		if (rs.next()) {
+			System.out.println(rs.getString("question"));
+			return true;
 		}
-		return true;
+		return false;
 	}
 }
